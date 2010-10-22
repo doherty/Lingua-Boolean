@@ -1,0 +1,91 @@
+NAME
+    Lingua::Boolean - comprehensively parse boolean response strings
+
+VERSION
+    version 0.001
+
+SYNOPSIS
+        use Lingua::Boolean;
+        print "Do it? ";
+        chomp(my $response = <>);
+        if ( boolean $response ) {   # YES, y, OK, 1...
+            print "OK, doing it.\n";
+        }
+        else {                      # no, N, 0...
+            print "OK, not doing it.\n";
+        }
+
+        # Once more, with feeling
+        print "Fait-le? ";
+        chomp(my $response = <>);
+        if ( boolean $response, 'fr' ) {    # OUI
+            print "OK, on le fait.\n";
+        }
+        else {                              # non
+            print "OK, on ne le fait pas.\n";
+        }
+
+DESCRIPTION
+    Does that string look like they said "true" or "false"? To know, you
+    have to check a lot of things. Lingua::Boolean attempts to do that in a
+    single module, and do so for multiple languages.
+
+FUNCTIONS
+  import
+    Calling "import()" will, obviously, import subs into your namespace. By
+    default, Lingua::Boolean imports the sub "boolean()". You can request to
+    have "looks_true()", "looks_false()", and "languages()" imported.
+
+  languages
+    "languages()" returns the list of languages Lingua::Boolean knows about.
+
+  looks_true
+    "looks_true()" tells you whether Lingua::Boolean thinks the thing looks
+    true. By default, it uses *en*; pass a language code as the second
+    parameter to check another language. Croaks if the language is unknown
+    to Lingua::Boolean.
+
+  looks_false
+    "looks_false()" tells you whether Lingua::Boolean thinks the thing looks
+    false. By default, it uses *en*; pass a language code as the second
+    parameter to check another language. Croaks if the language is unknown
+    to Lingua::Boolean.
+
+  boolean
+    "boolean()" tries to determine if the string "looks_true()" or
+    "looks_false()", and returns true or false accordingly. If both tests
+    fail, dies. By default, uses *en*; pass a language code as the second
+    parameter to check another language. Croaks if the language is unknown
+    to Lingua::Boolean.
+
+EXPORTS
+    By default, Lingua::Boolean exports "boolean()".
+
+AVAILABILITY
+    The latest version of this module is available from the Comprehensive
+    Perl Archive Network (CPAN). Visit <http://www.perl.com/CPAN/> to find a
+    CPAN site near you, or see
+    <http://search.cpan.org/dist/Lingua-Boolean/>.
+
+    The development version lives at
+    <http://github.com/doherty/Lingua-Boolean> and may be cloned from
+    <git://github.com/doherty/Lingua-Boolean>. Instead of sending patches,
+    please fork this project using the standard git and github
+    infrastructure.
+
+BUGS AND LIMITATIONS
+    No bugs have been reported.
+
+    Please report any bugs or feature requests through the web interface at
+    <http://github.com/doherty/Lingua-Boolean/issues>.
+
+AUTHOR
+    Mike Doherty <doherty@cs.dal.ca>
+
+COPYRIGHT AND LICENSE
+    This software is Copyright (c) 2010 by Mike Doherty.
+
+    This is free software, licensed under:
+
+      The GNU General Public License, Version 3, June 2007
+
