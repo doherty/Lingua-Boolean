@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use 5.0100;
-use Test::More tests => 4;
+use Test::More 0.94 tests => 4;
 
 use Lingua::Boolean;
 
