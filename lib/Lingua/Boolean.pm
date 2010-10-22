@@ -22,7 +22,7 @@ use boolean 0.21 qw(true false);
 
     # Once more, with feeling
     print "Fait-le? ";
-    chomp(my $response = <>);
+    chomp($response = <>);
     if ( boolean $response, 'fr' ) {    # OUI
         print "OK, on le fait.\n";
     }
@@ -49,14 +49,28 @@ imported.
 
 use Exporter qw(import);
 our @EXPORT    = qw(boolean); # EXPORTS
-our @EXPORT_OK = qw(looks_true looks_false languages);
+our @EXPORT_OK = qw(looks_true looks_false languages langs);
 
-my $langs; # PATCHES WELCOME
-$langs->{en}->{yes} = [qr{^y(?:es)?$}i, qr{^on$}i, qr{^ok$}i, qr{^[1-9]$}];
-$langs->{en}->{no}  = [qr{^no?$}i, qr{^off$}i, qr{not ?ok$}i, qr{^0$}];
+use Module::Pluggable search_path => [__PACKAGE__], require => 1;
+my $regexes;
+my $languages;
+foreach my $language ( __PACKAGE__->plugins() ) {
+    my $l = do {
+        no strict qw(refs);         ## no critic (ProhibitNoStrict)
+        ${ $language . '::LANG' };
+    };
+    my $l_long = do {
+        no strict qw(refs);         ## no critic (ProhibitNoStrict)
+        ${ $language . '::LANGUAGE' };
+    };
+    $languages->{$l} = $l_long;
 
-$langs->{fr}->{yes} = [qr{^oui$}i, qr{^ok$}i, qr{^[1-9]$}];
-$langs->{fr}->{no}  = [qr{^n(?:on?)?$}i, qr{^0$}];
+    my $r = do {
+        no strict qw(refs);         ## no critic (ProhibitNoStrict)
+        ${ $language . '::match' };
+    };
+    $regexes->{$l} = $r;
+}
 
 =head2 languages
 
@@ -65,7 +79,22 @@ C<languages()> returns the list of languages L<Lingua::Boolean> knows about.
 =cut
 
 sub languages {
-    return keys %$langs;
+    my @long_names;
+    foreach my $l (keys %$languages) {
+        push @long_names, $languages->{$l};
+    }
+    return @long_names;
+}
+
+=head2 langs
+
+C<langs()> returns the list of language codes L<Lingua::Boolean> knows about.
+
+=cut
+
+sub langs {
+    my @lang_codes = keys %$languages;
+    return @lang_codes;
 }
 
 =head2 looks_true
@@ -80,8 +109,8 @@ sub looks_true {
     my $to_test = shift;
     my $lang    = shift || 'en';
 
-    croak "I don't know anything about the language '$lang'" unless exists $langs->{$lang};
-    return true if ($to_test ~~ $langs->{$lang}->{yes});
+    croak "I don't know anything about the language '$lang'" unless exists $regexes->{$lang};
+    return true if ($to_test ~~ $regexes->{$lang}->{True});
     return false;
 }
 
@@ -97,8 +126,8 @@ sub looks_false {
     my $to_test = shift;
     my $lang    = shift || 'en';
 
-    croak "I don't know anything about the language '$lang'" unless exists $langs->{$lang};
-    return true if ($to_test ~~ $langs->{$lang}->{no});
+    croak "I don't know anything about the language '$lang'" unless exists $regexes->{$lang};
+    return true if ($to_test ~~ $regexes->{$lang}->{False});
     return false;
 }
 

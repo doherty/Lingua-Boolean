@@ -17,7 +17,7 @@ SYNOPSIS
 
         # Once more, with feeling
         print "Fait-le? ";
-        chomp(my $response = <>);
+        chomp($response = <>);
         if ( boolean $response, 'fr' ) {    # OUI
             print "OK, on le fait.\n";
         }
@@ -38,6 +38,10 @@ FUNCTIONS
 
   languages
     "languages()" returns the list of languages Lingua::Boolean knows about.
+
+  langs
+    "langs()" returns the list of language codes Lingua::Boolean knows
+    about.
 
   looks_true
     "looks_true()" tells you whether Lingua::Boolean thinks the thing looks

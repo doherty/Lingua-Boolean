@@ -7,8 +7,8 @@ use Lingua::Boolean;
 
 my $lang = 'fr';
 
-my @languages = Lingua::Boolean::languages();
-ok($lang ~~ @languages, "$lang is available");
+my @langs = Lingua::Boolean::langs();
+ok($lang ~~ @langs, "$lang is available");
 
 subtest 'yes' => sub {   #YES
     my @yes = ('oui', 'ok', 1);
