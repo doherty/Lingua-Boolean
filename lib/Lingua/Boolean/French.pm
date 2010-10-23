@@ -14,8 +14,8 @@ our $LANG = 'fr';
 our $LANGUAGE = 'Français';
 
 our $match;
-$match->{True}  = [qr{^oui$}i, qr{^ok$}i, qr{^[1-9]$}];
-$match->{False} = [qr{^n(?:on?)?$}i, qr{^0$}];
+$match->{True}  = [qr{^oui$}i, qr{^ok$}i, qr{^vraie?$}i, qr{^[1-9]$}];
+$match->{False} = [qr{^n(?:on?)?$}i, qr{^faux$}i, qr{^0$}];
 
 1;
 

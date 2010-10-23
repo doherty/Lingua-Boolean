@@ -11,7 +11,7 @@ my @langs = Lingua::Boolean::langs();
 ok($lang ~~ @langs, "$lang is available");
 
 subtest 'yes' => sub {   #YES
-    my @yes = ('oui', 'ok', 1);
+    my @yes = ('oui', 'ok', 'vrai', 1);
     plan tests => scalar @yes;
 
     foreach my $word (@yes) {
@@ -20,7 +20,7 @@ subtest 'yes' => sub {   #YES
 };
 
 subtest 'no' => sub {   # NO
-    my @no = ('n', 'no', 'non', 0);
+    my @no = ('n', 'no', 'non', 'faux', 0);
     plan tests => scalar @no;
 
     foreach my $word (@no) {
