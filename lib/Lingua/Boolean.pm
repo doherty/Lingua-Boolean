@@ -108,6 +108,7 @@ to check another language. Croaks if the language is unknown to L<Lingua::Boolea
 sub looks_true {
     my $to_test = shift;
     my $lang    = shift || 'en';
+    _trim($to_test);
 
     croak "I don't know anything about the language '$lang'" unless exists $regexes->{$lang};
     return true if ($to_test ~~ $regexes->{$lang}->{True});
@@ -125,6 +126,7 @@ to check another language. Croaks if the language is unknown to L<Lingua::Boolea
 sub looks_false {
     my $to_test = shift;
     my $lang    = shift || 'en';
+    _trim($to_test);
 
     croak "I don't know anything about the language '$lang'" unless exists $regexes->{$lang};
     return true if ($to_test ~~ $regexes->{$lang}->{False});
@@ -143,6 +145,7 @@ is unknown to L<Lingua::Boolean>.
 sub boolean {
     my $to_test = shift;
     my $lang    = shift || 'en';
+    _trim($to_test);
 
     if (looks_true($to_test, $lang)) {
         return true;
@@ -161,6 +164,13 @@ sub boolean {
 By default, L<Lingua::Boolean> exports C<boolean()>.
 
 =cut
+
+sub _trim { # http://www.perlmonks.org/?node_id=36684
+    @_ = $_ if not @_ and defined wantarray;
+    @_ = @_ if defined wantarray;
+    for (@_ ? @_ : $_) { s/^\s+|\s+$//g }
+    return wantarray ? @_ : $_[0] if defined wantarray;
+}
 
 1;
 

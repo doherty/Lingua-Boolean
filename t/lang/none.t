@@ -6,7 +6,7 @@ use Test::More 0.94 tests => 3;
 use Lingua::Boolean;
 
 subtest 'yes' => sub {   #YES
-    my @yes = ('y', 'yes', 'ok', 'on', 'Y', 'YES', 'OK', 'ON', 1, 2);
+    my @yes = (' y', 'yes ', 'ok', 'on', 'Y', 'YES', 'OK', 'ON', 1, 2);
     plan tests => scalar @yes * 2;
     foreach my $word (@yes) {
         ok(boolean($word), "$word is true");
@@ -15,7 +15,7 @@ subtest 'yes' => sub {   #YES
 };
 
 subtest 'no' => sub {   # NO
-    my @no = ('n', 'no', 'off', 'not ok', 'N', 'NO', 'OFF', 'NOTOK', 0);
+    my @no = ('n ', ' no', 'off', 'not ok', 'N', 'NO', 'OFF', 'NOTOK', 0);
     plan tests => scalar @no * 2;
     foreach my $word (@no) {
         ok(!boolean($word), "$word is false");
