@@ -1,5 +1,7 @@
 use strict;
 use warnings;
+# use diagnostics;
+# use Data::Dumper;
 use 5.0100;
 
 package Lingua::Boolean;
@@ -11,6 +13,8 @@ use boolean 0.21 qw(true false);
 =head1 SYNOPSIS
 
     use Lingua::Boolean;
+
+    # Use functional/procedural interface
     print "Do it? ";
     chomp(my $response = <>);
     if ( boolean $response ) {   # YES, y, OK, 1...
@@ -28,6 +32,17 @@ use boolean 0.21 qw(true false);
     }
     else {                              # non
         print "OK, on ne le fait pas.\n";
+    }
+
+    # Or, use OO interface
+    my $bool = Lingua::Boolean->new('en');
+    print "Do it? ";
+    chomp($response = <>);
+    if ($bool->boolean($response)) {
+        print "OK, doing it!\n";
+    }
+    else {
+        print "OK, not doing it.\n";
     }
 
 =head1 DESCRIPTION
@@ -48,40 +63,76 @@ imported.
 =cut
 
 use Exporter qw(import);
-our @EXPORT    = qw(boolean); # EXPORTS
-our @EXPORT_OK = qw(looks_true looks_false languages langs);
+our @EXPORT = qw(boolean);
 
-use Module::Pluggable search_path => [__PACKAGE__], require => 1;
-my $regexes;
-my $languages;
-foreach my $language ( __PACKAGE__->plugins() ) {
-    my $l = do {
-        no strict qw(refs);         ## no critic (ProhibitNoStrict)
-        ${ $language . '::LANG' };
-    };
-    my $l_long = do {
-        no strict qw(refs);         ## no critic (ProhibitNoStrict)
-        ${ $language . '::LANGUAGE' };
-    };
-    $languages->{$l} = $l_long;
+=head1 METHODS
 
-    my $r = do {
-        no strict qw(refs);         ## no critic (ProhibitNoStrict)
-        ${ $language . '::match' };
+=head2 new
+
+C<new()> creates a new C<Lingua::Boolean> object. You can optionally give it
+the code for the language you'll be working with, and only that language will
+be loaded. If you do so, you needn't pass the language to every call to
+C<boolean()>:
+
+    use Lingua::Boolean qw();
+    my $bool = Lingua::Boolean->new('fr');
+    print ($bool->boolean('oui') ? "TRUE\n" : "FALSE\n");
+
+Otherwise, C<boolean()> accept the language code as the second parameter:
+
+    use Lingua::Boolean qw();
+    my $bool = Lingua::Boolean->new();
+    print ($bool->boolean('oui', 'fr') ? "TRUE\n" : "FALSE\n");
+
+=cut
+
+sub new {
+    my $class = shift;
+    my $lang  = shift;
+
+    use Module::Pluggable search_path => [__PACKAGE__], require => 1;
+
+    my $regexes;
+    my $languages;
+    BUILD: foreach my $plugin ( __PACKAGE__->plugins() ) {
+        my $obj = $plugin->new();
+        next BUILD if (defined $lang and $obj->{LANG} ne $lang);
+
+        $regexes->{ $obj->{LANG} } = $obj->{match};
+        $languages->{ $obj->{LANG} } = $obj->{LANGUAGE};
+    }
+
+    my $self = {
+        regexes => $regexes,
+        languages => $languages,
+        lang => $lang,
     };
-    $regexes->{$l} = $r;
+    bless $self, $class;
+    return $self;
 }
 
 =head2 languages
 
 C<languages()> returns the list of languages L<Lingua::Boolean> knows about.
 
+    use Lingua::Boolean;
+    my @languages = Lingua::Boolean::languages(); # qw(English Français ...)
+
+When called as an object method, returns the languages B<that object> knows
+about:
+
+    use Lingua::Boolean qw();
+    my $bool = Lingua::Boolean->new('fr');
+    my @languages = $bool->languages(); # qw(Français)
+
 =cut
 
 sub languages {
+    my $self = ref $_[0] eq __PACKAGE__ ? shift : __PACKAGE__->new();
+
     my @long_names;
-    foreach my $l (keys %$languages) {
-        push @long_names, $languages->{$l};
+    foreach my $l (keys %{ $self->{languages} }) {
+        push @long_names, $self->{languages}->{$l};
     }
     return @long_names;
 }
@@ -90,80 +141,105 @@ sub languages {
 
 C<langs()> returns the list of language codes L<Lingua::Boolean> knows about.
 
+    use Lingua::Boolean;
+    my @lang_codes = Lingua::Boolean::langs(); # qw(en fr ...)
+
+When called as an object method, returns the languages B<that object> knows
+about:
+
+    use Lingua::Boolean qw();
+    my $bool = Lingua::Boolean->new('fr');
+    my @lang_codes = $bool->langs(); # qw(fr)
+
 =cut
 
 sub langs {
-    my @lang_codes = keys %$languages;
+    my $self = ref $_[0] eq __PACKAGE__ ? shift : __PACKAGE__->new();
+
+    my @lang_codes = keys %{ $self->{languages} };
     return @lang_codes;
-}
-
-=head2 looks_true
-
-C<looks_true()> tells you whether L<Lingua::Boolean> thinks the thing looks
-true. By default, it uses I<en>; pass a language code as the second parameter
-to check another language. Croaks if the language is unknown to L<Lingua::Boolean>.
-
-=cut
-
-sub looks_true {
-    my $to_test = shift;
-    my $lang    = shift || 'en';
-    _trim($to_test);
-
-    croak "I don't know anything about the language '$lang'" unless exists $regexes->{$lang};
-    return true if ($to_test ~~ $regexes->{$lang}->{True});
-    return false;
-}
-
-=head2 looks_false
-
-C<looks_false()> tells you whether L<Lingua::Boolean> thinks the thing looks
-false. By default, it uses I<en>; pass a language code as the second parameter
-to check another language. Croaks if the language is unknown to L<Lingua::Boolean>.
-
-=cut
-
-sub looks_false {
-    my $to_test = shift;
-    my $lang    = shift || 'en';
-    _trim($to_test);
-
-    croak "I don't know anything about the language '$lang'" unless exists $regexes->{$lang};
-    return true if ($to_test ~~ $regexes->{$lang}->{False});
-    return false;
 }
 
 =head2 B<boolean>
 
-B<C<boolean()>> tries to determine if the string C<looks_true()> or C<looks_false()>, and
+B<C<boolean()>> tries to determine if the string I<looks> true or I<looks> false, and
 returns true or false accordingly. If both tests fail, dies. By default, uses I<en>; pass
 a language code as the second parameter to check another language. Croaks if the language
-is unknown to L<Lingua::Boolean>.
+is unknown to Lingua::Boolean (or the Lingua::Boolean object, if used as an object method).
+
+This sub is exported by default, and can be used functionally:
+
+    use Lingua::Boolean;
+    print (boolean('yes') ? "TRUE\n" : "FALSE\n");
+
+Or, if you prefer object orientation, C<boolean()> is also an object method:
+
+    use Lingua::Boolean qw();
+    my $bool = Lingua::Boolean->new();
+    print ($bool->boolean('yes') ? "TRUE\n" : "FALSE\n");
+
+If you specify the language in the constructor, you needn't specify it in the call to C<boolean()>:
+
+    use Lingua::Boolean qw();
+    my $bool = Lingua::Boolean->new('fr');
+    print ($bool->boolean('OUI') ? "TRUE\n" : "FALSE\n");
 
 =cut
 
-sub boolean {
+sub _boolean {
+    my $self    = shift;
     my $to_test = shift;
     my $lang    = shift || 'en';
     _trim($to_test);
 
-    if (looks_true($to_test, $lang)) {
+    if ($self->_looks_true($to_test, $lang)) {
         return true;
     }
-    elsif (looks_false($to_test, $lang)) {
+    elsif ($self->_looks_false($to_test, $lang)) {
         return false;
     }
     else {
-        #omg
-        die "'$to_test' isn't recognizable as either true or false";
+        croak "'$to_test' isn't recognizable as either true or false";
     }
+}
+
+sub boolean {
+    my $self    = ref $_[0] eq __PACKAGE__ ? shift : __PACKAGE__->new($_[1]);
+    my $to_test = shift;
+    my $lang    = shift || $self->{lang};
+    _trim($to_test);
+
+    return $self->_boolean($to_test, $lang);
 }
 
 =head1 EXPORTS
 
-By default, L<Lingua::Boolean> exports C<boolean()>.
+By default, L<Lingua::Boolean> exports C<boolean()>. All other methods
+must be fully qualified - or use the object oriented interface.
 
 =cut
+
+sub _looks_true {
+    my $self    = shift;
+    my $to_test = shift;
+    my $lang    = shift || 'en';
+    _trim($to_test);
+
+    croak "I don't know anything about the language '$lang'" unless exists $self->{regexes}->{$lang}->{True};
+    return true if ($to_test ~~ $self->{regexes}->{$lang}->{True});
+    return false;
+}
+
+sub _looks_false {
+    my $self    = shift;
+    my $to_test = shift;
+    my $lang    = shift || 'en';
+    _trim($to_test);
+
+    croak "I don't know anything about the language '$lang'" unless exists $self->{regexes}->{$lang}->{False};
+    return true if ($to_test ~~ $self->{regexes}->{$lang}->{False});
+    return false;
+}
 
 sub _trim { # http://www.perlmonks.org/?node_id=36684
     @_ = $_ if not @_ and defined wantarray;

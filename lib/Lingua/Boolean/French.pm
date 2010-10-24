@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use utf8;
 package Lingua::Boolean::French;
-# ABSTRACT: provides French to Lingua::Boolean
+# ABSTRACT: provides French rules to Lingua::Boolean
 
 =head1 DESCRIPTION
 
@@ -10,12 +10,39 @@ This module provides rules for French to L<Lingua::Boolean>.
 
 =cut
 
-our $LANG = 'fr';
-our $LANGUAGE = 'Français';
+=head1 METHODS
 
-our $match;
-$match->{True}  = [qr{^oui$}i, qr{^ok$}i, qr{^vraie?$}i, qr{^[1-9]$}];
-$match->{False} = [qr{^n(?:on?)?$}i, qr{^faux$}i, qr{^0$}];
+=head2 new
+
+C<new()> creates a new C<Lingua::Boolean::French> object. This is
+intended for consumption by L<Lingua::Boolean> only.
+
+=cut
+
+sub new {
+    my $class = shift;
+
+    my $LANG = 'fr';
+    my $LANGUAGE = 'Français';
+
+    my $match;
+    $match->{True}  = [qr{^oui$}i, qr{^ok$}i, qr{^vraie?$}i, qr{^[1-9]$}];
+    $match->{False} = [qr{^n(?:on?)?$}i, qr{^faux$}i, qr{^0$}];
+
+    my $self = {
+        LANG => $LANG,
+        LANGUAGE => $LANGUAGE,
+        match => $match,
+    };
+    bless $self, $class;
+    return $self;
+}
+
+=head1 SEE ALSO
+
+L<Lingua::Boolean>
+
+=cut
 
 1;
 

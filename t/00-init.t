@@ -1,28 +1,46 @@
 use strict;
 use warnings;
 use utf8;
-use Test::More 0.75 tests => 4;
+use Test::More 0.75 tests => 3;
 
 BEGIN {
-    use_ok('Lingua::Boolean', qw(boolean looks_true looks_false languages langs));
+    use_ok('Lingua::Boolean', qw(boolean));
 }
 
-can_ok('Lingua::Boolean', qw(boolean looks_true looks_false languages langs));
+my @should_have_codes = (
+    'en',
+    'fr',
+);
 
-{   # Language codes
-    my @has = langs();
-    my @should_have = (
-        'en',
-        'fr',
-    );
-    is_deeply(\@has, \@should_have, 'Available language codes OK');
-}
+my @should_have_names = (
+    'English',
+    'Français',
+);
 
-{   # Languages names
-    my @has = languages();
-    my @should_have = (
-        'English',
-        'Français',
-    );
-    is_deeply(\@has, \@should_have, 'Available language names OK');
-}
+subtest 'oo' => sub {
+    plan tests => 4;
+    my $bool = new_ok('Lingua::Boolean');
+    can_ok($bool, qw(boolean langs languages _looks_true _looks_false _trim));
+    {   # Language codes
+        my @has = $bool->langs();
+        is_deeply(\@has, \@should_have_codes, 'Available language codes OK');
+    }
+
+    {   # Languages names
+        my @has = $bool->languages();
+        is_deeply(\@has, \@should_have_names, 'Available language names OK');
+    }
+};
+
+subtest 'func' => sub {
+    plan tests => 2;
+    {   # Language codes
+        my @has = Lingua::Boolean::langs();
+        is_deeply(\@has, \@should_have_codes, 'Available language codes OK');
+    }
+
+    {   # Language names
+        my @has = Lingua::Boolean::languages();
+        is_deeply(\@has, \@should_have_names, 'Available language names OK');
+    }
+};
