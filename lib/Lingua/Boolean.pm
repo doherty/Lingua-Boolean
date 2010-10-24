@@ -92,20 +92,17 @@ sub new {
 
     use Module::Pluggable search_path => [__PACKAGE__], require => 1;
 
-    my $regexes;
-    my $languages;
+    my $objects;
     BUILD: foreach my $plugin ( __PACKAGE__->plugins() ) {
         my $obj = $plugin->new();
         next BUILD if (defined $lang and $obj->{LANG} ne $lang);
 
-        $regexes->{ $obj->{LANG} } = $obj->{match};
-        $languages->{ $obj->{LANG} } = $obj->{LANGUAGE};
+        $objects->{ $obj->{LANG} } = $obj;
     }
 
     my $self = {
-        regexes => $regexes,
-        languages => $languages,
-        lang => $lang,
+        languages => $objects,
+        lang      => $lang,
     };
     bless $self, $class;
     return $self;
@@ -132,7 +129,7 @@ sub languages {
 
     my @long_names;
     foreach my $l (keys %{ $self->{languages} }) {
-        push @long_names, $self->{languages}->{$l};
+        push @long_names, $self->{languages}->{$l}->{LANGUAGE};
     }
     return @long_names;
 }
@@ -225,8 +222,8 @@ sub _looks_true {
     my $lang    = shift || 'en';
     _trim($to_test);
 
-    croak "I don't know anything about the language '$lang'" unless exists $self->{regexes}->{$lang}->{True};
-    return true if ($to_test ~~ $self->{regexes}->{$lang}->{True});
+    croak "I don't know anything about the language '$lang'" unless exists $self->{languages}->{$lang}->{match}->{True};
+    return true if ($to_test ~~ $self->{languages}->{$lang}->{match}->{True});
     return false;
 }
 
@@ -236,8 +233,8 @@ sub _looks_false {
     my $lang    = shift || 'en';
     _trim($to_test);
 
-    croak "I don't know anything about the language '$lang'" unless exists $self->{regexes}->{$lang}->{False};
-    return true if ($to_test ~~ $self->{regexes}->{$lang}->{False});
+    croak "I don't know anything about the language '$lang'" unless exists $self->{languages}->{$lang}->{match}->{False};
+    return true if ($to_test ~~ $self->{languages}->{$lang}->{match}->{False});
     return false;
 }
 
