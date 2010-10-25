@@ -2,6 +2,7 @@ Revision history for Perl module Lingua::Boolean
 
 {{$NEXT}}
     * Updated documentation
+    * Specified encoding in POD
 
 0.001     2010-10-24
     * Initial version
