@@ -1,4 +1,6 @@
 Revision history for Perl module Lingua::Boolean
 
 {{$NEXT}}
+
+0.001     2010-10-24
     * Initial version
