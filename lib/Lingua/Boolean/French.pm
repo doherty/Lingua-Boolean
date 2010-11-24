@@ -3,7 +3,6 @@ use warnings;
 use utf8;
 package Lingua::Boolean::French;
 # ABSTRACT: provides French rules to Lingua::Boolean
-# ENCODING: utf-8
 
 =head1 DESCRIPTION
 

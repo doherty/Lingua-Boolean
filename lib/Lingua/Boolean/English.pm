@@ -3,7 +3,6 @@ use warnings;
 use utf8;
 package Lingua::Boolean::English;
 # ABSTRACT: provides English rules to Lingua::Boolean
-# ENCODING: utf-8
 
 =head1 DESCRIPTION
 

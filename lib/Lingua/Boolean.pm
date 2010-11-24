@@ -6,7 +6,6 @@ use 5.010001;
 
 package Lingua::Boolean;
 # ABSTRACT: comprehensively parse boolean response strings
-# ENCODING: utf-8
 
 use Carp;
 use boolean 0.21 qw(true false);
