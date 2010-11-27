@@ -9,6 +9,7 @@ package Lingua::Boolean;
 
 use Carp;
 use boolean 0.21 qw(true false);
+use String::Trim;
 
 =head1 SYNOPSIS
 
@@ -144,7 +145,7 @@ sub _boolean {
     my $self    = shift;
     my $to_test = shift;
     my $lang    = shift || 'en';
-    _trim($to_test);
+    trim($to_test);
 
     if ($self->_looks_true($to_test, $lang)) {
         return true;
@@ -161,7 +162,7 @@ sub boolean {
     my $self    = ref $_[0] eq __PACKAGE__ ? shift : __PACKAGE__->new($_[1]);
     my $to_test = shift;
     my $lang    = shift || $self->{lang};
-    _trim($to_test);
+    trim($to_test);
 
     return $self->_boolean($to_test, $lang);
 }
@@ -226,7 +227,7 @@ sub _looks_true {
     my $self    = shift;
     my $to_test = shift;
     my $lang    = shift || 'en';
-    _trim($to_test);
+    trim($to_test);
 
     croak "I don't know anything about the language '$lang'" unless exists $self->{languages}->{$lang}->{match}->{True};
     return true if ($to_test ~~ $self->{languages}->{$lang}->{match}->{True});
@@ -237,18 +238,11 @@ sub _looks_false {
     my $self    = shift;
     my $to_test = shift;
     my $lang    = shift || 'en';
-    _trim($to_test);
+    trim($to_test);
 
     croak "I don't know anything about the language '$lang'" unless exists $self->{languages}->{$lang}->{match}->{False};
     return true if ($to_test ~~ $self->{languages}->{$lang}->{match}->{False});
     return false;
-}
-
-sub _trim { # http://www.perlmonks.org/?node_id=36684
-    @_ = $_ if not @_ and defined wantarray;
-    @_ = @_ if defined wantarray;
-    for (@_ ? @_ : $_) { s/^\s+|\s+$//g }
-    return wantarray ? @_ : $_[0] if defined wantarray;
 }
 
 1;
