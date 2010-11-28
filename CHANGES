@@ -1,6 +1,8 @@
 Revision history for Perl module Lingua::Boolean
 
 {{$NEXT}}
+
+0.005     2010-11-28
     * Use Perl_5 license: your choice of GPL or Artistic
 0.004     2010-11-28
     * Use String::Trim to provide a trim function
