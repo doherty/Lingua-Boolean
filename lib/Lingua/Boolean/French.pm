@@ -1,8 +1,9 @@
+package Lingua::Boolean::French;
+# ABSTRACT: provides French rules to Lingua::Boolean
 use strict;
 use warnings;
 use utf8;
-package Lingua::Boolean::French;
-# ABSTRACT: provides French rules to Lingua::Boolean
+# VERSION
 
 =head1 DESCRIPTION
 

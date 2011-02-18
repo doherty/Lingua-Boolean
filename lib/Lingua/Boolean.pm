@@ -1,12 +1,9 @@
-use strict;
-use warnings;
-# use diagnostics;
-# use Data::Dumper;
-use 5.010001;
-
 package Lingua::Boolean;
 # ABSTRACT: comprehensively parse boolean response strings
-
+use strict;
+use warnings;
+use 5.010001;
+# VERSION
 use Carp;
 use boolean 0.21 qw(true false);
 use String::Trim;
