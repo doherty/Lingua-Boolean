@@ -51,7 +51,7 @@ in a single module, and do so for multiple languages.
 
 =head1 METHODS
 
-C<Lingua::Boolean> provides both a functional/procedural and object-oriented
+C<Lingua::Boolean> provides both functional/procedural and object-oriented
 interfaces. Everything described below is an object method, but can also be
 called as a function. C<boolean()> is exported by default, and can be called
 that way - everything else requires the fully-qualified name.
