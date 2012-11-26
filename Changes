@@ -1,6 +1,8 @@
 Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
+
+0.007     2012-11-25
     * minor POD fix
     * Test suite updates
 
