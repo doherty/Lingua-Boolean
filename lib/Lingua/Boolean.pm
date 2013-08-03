@@ -3,6 +3,8 @@ package Lingua::Boolean;
 use strict;
 use warnings;
 use 5.010001;
+use experimental qw/smartmatch/;
+
 # VERSION
 use Carp;
 use boolean 0.21 qw(true false);
