@@ -1,5 +1,5 @@
 package Lingua::Boolean::English;
-# ABSTRACT: provides English rules to Lingua::Boolean
+# ABSTRACT: DEPRECATED - provides English rules to Lingua::Boolean
 use strict;
 use warnings;
 use utf8;

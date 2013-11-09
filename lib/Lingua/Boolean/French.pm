@@ -1,5 +1,5 @@
 package Lingua::Boolean::French;
-# ABSTRACT: provides French rules to Lingua::Boolean
+# ABSTRACT: DEPRECATED - provides French rules to Lingua::Boolean
 use strict;
 use warnings;
 use utf8;

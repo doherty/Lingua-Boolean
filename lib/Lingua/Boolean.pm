@@ -1,5 +1,5 @@
 package Lingua::Boolean;
-# ABSTRACT: comprehensively parse boolean response strings
+# ABSTRACT: DEPRECATED module to comprehensively parse boolean response strings
 use strict;
 use warnings;
 use 5.010001;
@@ -13,7 +13,7 @@ use Module::Load qw(load);
 
 =head1 SYNOPSIS
 
-    use Lingua::Boolean;
+    use Lingua::Boolean; # NO! Don't use it - use Lingua::Boolean::Tiny
 
     # Use functional/procedural interface
     print "Do it? ";
@@ -47,6 +47,11 @@ use Module::Load qw(load);
     }
 
 =head1 DESCRIPTION
+
+B<This module is deprecated.> It began as an experiment with the concept,
+as well as API design. The experiment worked -- we proved that this
+module has a bad interface. If you are still interested in the conceptual
+experiment, give L<Lingua::Boolean::Tiny> a try.
 
 Does that string look like they said "true" or "false"? To know, you
 have to check a lot of things. C<Lingua::Boolean> attempts to do that
