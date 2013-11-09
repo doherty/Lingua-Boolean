@@ -2,6 +2,7 @@ Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
   - Silence smartmatch warnings
+  - Don't use Module::Pluggable to do a dynamic search for languages
 
 0.007     2012-11-25
   - minor POD fix

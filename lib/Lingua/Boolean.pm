@@ -8,7 +8,8 @@ use experimental qw/smartmatch/;
 # VERSION
 use Carp;
 use boolean 0.21 qw(true false);
-use String::Trim;
+use String::Trim qw(trim);
+use Module::Load qw(load);
 
 =head1 SYNOPSIS
 
@@ -97,10 +98,9 @@ sub new {
     my $class = shift;
     my $lang  = shift;
 
-    use Module::Pluggable search_path => [__PACKAGE__], require => 1;
-
     my $objects;
-    BUILD: foreach my $plugin ( __PACKAGE__->plugins() ) {
+    BUILD: foreach my $plugin ( map { __PACKAGE__ . "::$_" } qw/ English French / ) {
+        load $plugin;
         my $obj = $plugin->new();
         next BUILD if (defined $lang and $obj->{LANG} ne $lang);
 
