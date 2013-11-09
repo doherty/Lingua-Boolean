@@ -1,6 +1,8 @@
 Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
+
+0.008     2013-11-09
   - Silence smartmatch warnings
   - Don't use Module::Pluggable to do a dynamic search for languages
   - Deprecate this module in favour of Lingua::Boolean::Tiny
